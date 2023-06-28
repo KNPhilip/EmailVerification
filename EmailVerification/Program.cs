@@ -1,6 +1,7 @@
 global using Microsoft.EntityFrameworkCore;
 global using EmailVerification.Models;
 global using EmailVerification.Data;
+global using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
