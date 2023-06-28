@@ -4,10 +4,17 @@
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegisterRequest request)
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            
+            _userService = userService;
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult<string>> Register(UserRegisterRequest request)
+        {
+            return await _userService.RegisterAsync(request);
         }
     }
 }

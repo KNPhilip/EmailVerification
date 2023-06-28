@@ -4,6 +4,7 @@ global using EmailVerification.Data;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Mvc;
 global using EmailVerification.Services;
+global using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
