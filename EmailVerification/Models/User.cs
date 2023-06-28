@@ -2,7 +2,7 @@
 {
     public class User
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
         public string? Email { get; set; } = string.Empty;
         public string? PasswordHash { get; set; } = string.Empty;
         public string? VerificationToken { get; set; } = string.Empty;
