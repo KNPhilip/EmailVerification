@@ -16,5 +16,11 @@
         {
             return await _userService.RegisterAsync(request);
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(UserRegisterRequest request)
+        {
+            return await _userService.LoginAsync(request);
+        }
     }
 }
