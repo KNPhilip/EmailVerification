@@ -6,5 +6,6 @@
         Task<ActionResult<string>> LoginAsync(UserRegisterRequest request);
         Task<ActionResult<string>> VerifyAsync(string token);
         Task<ActionResult<string>> ForgotPasswordAsync(string email);
+        Task<ActionResult<string>> ResetPasswordAsync(ResetPasswordRequest request);
     }
 }

@@ -34,5 +34,11 @@
         {
             return await _userService.ForgotPasswordAsync(email);
         }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<string>> ResetPassword(ResetPasswordRequest request)
+        {
+            return await _userService.ResetPasswordAsync(request);
+        }
     }
 }

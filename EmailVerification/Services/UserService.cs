@@ -74,6 +74,23 @@
             return "You may now reset your password.";
         }
 
+        public async Task<ActionResult<string>> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
+            if (user is null || user.ResetTokenExpires < DateTime.Now)
+            {
+                return "Invalid Token.";
+            }
+
+            request.NewPassword = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+
+            await _context.SaveChangesAsync();
+
+            return "Password successfully reset.";
+        }
+
         private static string CreateRandomToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
