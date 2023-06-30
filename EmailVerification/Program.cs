@@ -1,11 +1,16 @@
 global using Microsoft.EntityFrameworkCore;
 global using EmailVerification.Models;
+global using EmailVerification.Dtos;
 global using EmailVerification.Data;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Security.Cryptography;
 global using EmailVerification.Services.UserService;
 global using EmailVerification.Services.EmailService;
+global using MimeKit;
+global using MimeKit.Text;
+global using MailKit.Net.Smtp;
+global using MailKit.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
