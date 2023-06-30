@@ -22,5 +22,11 @@
         {
             return await _userService.LoginAsync(request);
         }
+
+        [HttpPost("verify")]
+        public async Task<ActionResult<string>> Verify(string token)
+        {
+            return await _userService.VerifyAsync(token);
+        }
     }
 }
