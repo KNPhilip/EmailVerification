@@ -1,8 +1,0 @@
-﻿namespace EmailVerification.Services
-{
-    public interface IUserService
-    {
-        Task<ActionResult<string>> RegisterAsync(UserRegisterRequest request);
-        Task<ActionResult<string>> LoginAsync(UserRegisterRequest request);
-    }
-}

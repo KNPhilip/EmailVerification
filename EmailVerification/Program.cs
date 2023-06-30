@@ -1,10 +1,16 @@
 global using Microsoft.EntityFrameworkCore;
 global using EmailVerification.Models;
+global using EmailVerification.Dtos;
 global using EmailVerification.Data;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.AspNetCore.Mvc;
-global using EmailVerification.Services;
 global using System.Security.Cryptography;
+global using EmailVerification.Services.UserService;
+global using EmailVerification.Services.EmailService;
+global using MimeKit;
+global using MimeKit.Text;
+global using MailKit.Net.Smtp;
+global using MailKit.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +20,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
 

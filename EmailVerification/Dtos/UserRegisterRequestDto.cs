@@ -1,6 +1,6 @@
-﻿namespace EmailVerification.Models
+﻿namespace EmailVerification.Dtos
 {
-    public class UserRegisterRequest
+    public class UserRegisterRequestDto
     {
         [Required, EmailAddress]
         public required string Email { get; set; } = string.Empty;
