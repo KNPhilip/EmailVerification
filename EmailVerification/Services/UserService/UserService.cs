@@ -59,7 +59,7 @@
 
             if (user.VerifiedAt is null)
             {
-                return "User not verified.";
+                return "User not yet verified.";
             }
 
             return $"You logged in successfully, {request.Email}!";
@@ -81,28 +81,35 @@
 
         public async Task<ActionResult<string>> ForgotPasswordAsync(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user is null)
+            try
             {
-                return "This user does not exist.";
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user is null)
+                {
+                    return "This user does not exist.";
+                }
+
+                user.PasswordResetToken = CreateRandomToken();
+                user.ResetTokenExpires = DateTime.Now.AddHours(1);
+                await _context.SaveChangesAsync();
+
+                var mail = new EmailDto
+                {
+                    To = email,
+                    Subject = "Please verify your account",
+                    Body = "<p>Hey! You've just tried to reset your password for your account - " +
+                            "Please reset it using this token: " +
+                            $"{user.PasswordResetToken}</p>"
+                };
+
+                _emailService.SendEmail(mail);
+
+                return "You may now reset your password.";
             }
-
-            user.PasswordResetToken = CreateRandomToken();
-            user.ResetTokenExpires = DateTime.Now.AddHours(1);
-            await _context.SaveChangesAsync();
-
-            var mail = new EmailDto
+            catch (Exception e)
             {
-                To = email,
-                Subject = "Please verify your account",
-                Body = "<p>Hey! You've just tried to reset your password for your account - " +
-                        "Please reset it using this token: " +
-                        $"{user.PasswordResetToken}\"</p>"
-            };
-
-            _emailService.SendEmail(mail);
-
-            return "You may now reset your password.";
+                return $"Something went wrong: {e.Message}";
+            }
         }
 
         public async Task<ActionResult<string>> ResetPasswordAsync(ResetPasswordRequestDto request)
@@ -113,7 +120,7 @@
                 return "Invalid Token.";
             }
 
-            request.NewPassword = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
             user.PasswordResetToken = null;
             user.ResetTokenExpires = null;
 
