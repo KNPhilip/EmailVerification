@@ -1,4 +1,6 @@
-﻿namespace EmailVerification.Services
+﻿using EmailVerification.Dtos;
+
+namespace EmailVerification.Services.UserService
 {
     public class UserService : IUserService
     {
@@ -9,7 +11,7 @@
             _context = context;
         }
 
-        public async Task<ActionResult<string>> RegisterAsync(UserRegisterRequest request)
+        public async Task<ActionResult<string>> RegisterAsync(UserRegisterRequestDto request)
         {
             if (_context.Users.Any(u => u.Email == request.Email))
             {
@@ -29,7 +31,7 @@
             return "User created, now please verify";
         }
 
-        public async Task<ActionResult<string>> LoginAsync(UserRegisterRequest request)
+        public async Task<ActionResult<string>> LoginAsync(UserRegisterRequestDto request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
@@ -74,7 +76,7 @@
             return "You may now reset your password.";
         }
 
-        public async Task<ActionResult<string>> ResetPasswordAsync(ResetPasswordRequest request)
+        public async Task<ActionResult<string>> ResetPasswordAsync(ResetPasswordRequestDto request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
             if (user is null || user.ResetTokenExpires < DateTime.Now)

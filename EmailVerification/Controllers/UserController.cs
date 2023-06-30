@@ -1,4 +1,7 @@
-﻿namespace EmailVerification.Controllers
+﻿using EmailVerification.Dtos;
+using EmailVerification.Services.UserService;
+
+namespace EmailVerification.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -12,13 +15,13 @@
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<string>> Register(UserRegisterRequest request)
+        public async Task<ActionResult<string>> Register(UserRegisterRequestDto request)
         {
             return await _userService.RegisterAsync(request);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserRegisterRequest request)
+        public async Task<ActionResult<string>> Login(UserRegisterRequestDto request)
         {
             return await _userService.LoginAsync(request);
         }
@@ -36,7 +39,7 @@
         }
 
         [HttpPost("reset-password")]
-        public async Task<ActionResult<string>> ResetPassword(ResetPasswordRequest request)
+        public async Task<ActionResult<string>> ResetPassword(ResetPasswordRequestDto request)
         {
             return await _userService.ResetPasswordAsync(request);
         }

@@ -1,6 +1,6 @@
-﻿namespace EmailVerification.Models
+﻿namespace EmailVerification.Dtos
 {
-    public class ResetPasswordRequest
+    public class ResetPasswordRequestDto
     {
         [Required]
         public string Token { get; set; } = string.Empty;
