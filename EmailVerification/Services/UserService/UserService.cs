@@ -1,34 +1,52 @@
-﻿using EmailVerification.Dtos;
-
-namespace EmailVerification.Services.UserService
+﻿namespace EmailVerification.Services.UserService
 {
     public class UserService : IUserService
     {
         private readonly DataContext _context;
+        private readonly IEmailService _emailService;
 
-        public UserService(DataContext context)
+        public UserService(DataContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<ActionResult<string>> RegisterAsync(UserRegisterRequestDto request)
         {
-            if (_context.Users.Any(u => u.Email == request.Email))
+            try
             {
-                return "User already exists.";
+                if (_context.Users.Any(u => u.Email == request.Email))
+                {
+                    return "User already exists.";
+                }
+
+                var user = new User
+                {
+                    Email = request.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    VerificationToken = CreateRandomToken()
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                var mail = new EmailDto
+                {
+                    To = request.Email,
+                    Subject = "Please verify your email",
+                    Body = "<p>Hey! You've just tried to register an account - " +
+                        "Please verify using this token: " +
+                        $"{user.VerificationToken}\"</p>"
+                };
+
+                _emailService.SendEmail(mail);
+                return "Please check your email to verify your user.";
+            }
+            catch (Exception e)
+            {
+                return $"Something went wrong: {e.Message}";
             }
 
-            var user = new User
-            {
-                Email = request.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                VerificationToken = CreateRandomToken()
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return "User created, now please verify";
         }
 
         public async Task<ActionResult<string>> LoginAsync(UserRegisterRequestDto request)
@@ -58,7 +76,7 @@ namespace EmailVerification.Services.UserService
             user.VerifiedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
-            return "User verified.";
+            return "User verified, you may now log in.";
         }
 
         public async Task<ActionResult<string>> ForgotPasswordAsync(string email)
@@ -72,6 +90,17 @@ namespace EmailVerification.Services.UserService
             user.PasswordResetToken = CreateRandomToken();
             user.ResetTokenExpires = DateTime.Now.AddHours(1);
             await _context.SaveChangesAsync();
+
+            var mail = new EmailDto
+            {
+                To = email,
+                Subject = "Please verify your account",
+                Body = "<p>Hey! You've just tried to reset your password for your account - " +
+                        "Please reset it using this token: " +
+                        $"{user.PasswordResetToken}\"</p>"
+            };
+
+            _emailService.SendEmail(mail);
 
             return "You may now reset your password.";
         }

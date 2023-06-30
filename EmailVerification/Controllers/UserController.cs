@@ -26,7 +26,7 @@ namespace EmailVerification.Controllers
             return await _userService.LoginAsync(request);
         }
 
-        [HttpPost("verify")]
+        [HttpPost("verify/{token}")]
         public async Task<ActionResult<string>> Verify(string token)
         {
             return await _userService.VerifyAsync(token);
