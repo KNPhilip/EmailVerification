@@ -20,7 +20,7 @@
             {
                 Email = request.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                VerificationToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(64))
+                VerificationToken = CreateRandomToken()
             };
 
             _context.Users.Add(user);
@@ -57,6 +57,26 @@
             await _context.SaveChangesAsync();
 
             return "User verified.";
+        }
+
+        public async Task<ActionResult<string>> ForgotPasswordAsync(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user is null)
+            {
+                return "This user does not exist.";
+            }
+
+            user.PasswordResetToken = CreateRandomToken();
+            user.ResetTokenExpires = DateTime.Now.AddHours(1);
+            await _context.SaveChangesAsync();
+
+            return "You may now reset your password.";
+        }
+
+        private static string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
     }
 }

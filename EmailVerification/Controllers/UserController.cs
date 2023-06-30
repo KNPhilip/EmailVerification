@@ -28,5 +28,11 @@
         {
             return await _userService.VerifyAsync(token);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<string>> ForgotPassword(string email)
+        {
+            return await _userService.ForgotPasswordAsync(email);
+        }
     }
 }
